@@ -1,0 +1,22 @@
+#include <lpc214x.h>
+#define mask 0x0000FFC0 // set output bits for DAC
+#define shift 6
+
+void DAC_INIT()
+{
+	PINSEL1 |= 1<<19; //set P0.25 as DAC output
+	DACR = 1<<16; // set bias settling time:2.5us, max current:350uA
+}
+
+void main()
+{
+	unsigned int i;
+	DAC_INIT(); // initialize DAC
+	while(1)
+	{
+		for(i=1023;i>0;i--) // decrement DAC value
+		{
+			DACR = (i<<shift) & mask; // load the DAC value by shifting and applying mask
+		}
+	}
+}
