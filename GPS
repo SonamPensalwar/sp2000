@@ -1,0 +1,40 @@
+#include <lpc214x.h>
+#include "UART_INIT.c"
+#include "UART1_init.c"
+ 
+unsigned char msg1[36] = "GPS UART initialized";
+unsigned char msg2[36] = "\n Invalid GPS string";
+unsigned char lat_msg[36] = "\n Latitude= ";
+unsigned char long_msg[36] = "\n Longitude= ";
+
+int main()
+{
+	uart_init(); // UART0 Initialization
+  uart1_init(); // UART1 Initialization
+	unsigned char temp;
+  UART0_S(msg1); // transmit msg1 to UART0
+	
+	while(1){
+		while((UART1_GetChar())!='$'); // check for '$'
+		while((UART1_GetChar())!='R'); // check for 'R'
+		while((UART1_GetChar())!='A'); // check for 'A'
+		UART1_GetChar(); // read the character
+		
+		UART0_S(lat_msg); // transmit lattitude message
+		
+		do{
+			temp = UART1_GetChar(); // read character
+			UART0_PutChar(temp); // transmit received character
+		} while(temp != 0x2C); // continue checking until ','
+		
+		UART1_GetChar(); // read for N/S
+		UART1_GetChar(); // read for ','
+		
+		UART0_S(long_msg); // transmit longitude message
+		
+		do{
+			temp = UART1_GetChar();
+			UART0_PutChar(temp);
+		} while(temp != 0x2C);
+	}
+}
