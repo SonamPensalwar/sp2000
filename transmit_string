@@ -1,0 +1,19 @@
+#include <lpc214x.h>
+#include "delay.c"
+#include "UART_INIT.c"
+
+void main(){
+	unsigned char a[20]="\nBhakti Rucha"; // array of characters
+	unsigned char i;
+	uart_init(); // initialize UART0
+	for(i=0;a[i]!='\0';i++){ // loop until null 
+		if(a[i]!="\0"){
+			while(!(U0LSR & 0X20)); // wait until UART0 transmitter is ready
+			U0THR=0X0D; // carriage return
+		}
+		U0THR=a[i]; // load the current character in U0THR
+		while(!(U0LSR & 0X20)); // wait until UART0 transmitter is ready to send next byte
+		delay(6000);
+	}
+	while(1);
+}
