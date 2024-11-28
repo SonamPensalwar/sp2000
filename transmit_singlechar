@@ -1,0 +1,8 @@
+#include <lpc214x.h>
+#include "UART_INIT.c"
+
+void main(){
+	uart_init();
+	U0THR = 'A'; // store the data which is to be transmitted
+	while(1);
+}
