@@ -1,0 +1,14 @@
+#include <lpc214x.h>
+#include "delay.c"
+#include "UART_INIT.c"
+
+void main(){
+	unsigned char r_data;
+	uart_init();
+	while(1){
+		while(!(U0LSR & 0x01)); // wait until UART0 receiver has data
+		r_data=U0RBR; // read the received data using U0RBR
+		while(!(U0LSR & 0x20)); // wait until UART0 transmitter is ready
+		U0THR=r_data; // transmit the data
+	}
+}
